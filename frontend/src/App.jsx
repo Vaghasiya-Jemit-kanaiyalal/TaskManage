@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import './pixel-modal.css';
+const getTodayString = () => new Date().toISOString().split('T')[0];
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const [newTaskForm, setNewTaskForm] = useState({ title: '', desc: '', priority: 'medium' });
+  const [newTaskForm, setNewTaskForm] = useState({ title: '', desc: '', priority: 'medium', date: getTodayString() });
 
   useEffect(() => {
     fetch('/api/tasks')
@@ -42,7 +44,7 @@ function App() {
   };
 
   const handleOpenAdd = () => {
-    setNewTaskForm({ title: '', desc: '', priority: 'medium' });
+    setNewTaskForm({ title: '', desc: '', priority: 'medium', date: getTodayString() });
     setIsAddOpen(true);
   };
 
@@ -339,54 +341,91 @@ function App() {
       )}
       {isAddOpen && (
         <div className="modal-overlay" onClick={() => setIsAddOpen(false)}>
-          <div className="modal-content textured-box" onClick={e => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3><i className="fa-solid fa-plus"></i> Add New Task</h3>
-              <button className="close-btn" onClick={() => setIsAddOpen(false)}><i className="fa-solid fa-xmark"></i></button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleAddTaskSubmit}>
-                <div className="filter-group">
-                  <label>Task Name</label>
-                  <input 
-                    type="text" 
-                    className="custom-select" 
-                    style={{ background: 'white', border: '1px solid #ccc' }}
-                    value={newTaskForm.title} 
-                    onChange={e => setNewTaskForm({...newTaskForm, title: e.target.value})} 
-                    required 
-                    placeholder="Enter task name"
-                  />
+          <div className="pixel-modal" onClick={e => e.stopPropagation()}>
+            <div className="pixel-modal-inner">
+              <div className="pixel-modal-header">
+                <div className="pixel-modal-title">
+                  <span style={{ fontSize: '24px' }}>🧑🏻‍🎤✨</span> Create New Task
                 </div>
-                <div className="filter-group">
-                  <label>Description</label>
-                  <input 
-                    type="text" 
-                    className="custom-select" 
-                    style={{ background: 'white', border: '1px solid #ccc' }}
-                    value={newTaskForm.desc} 
-                    onChange={e => setNewTaskForm({...newTaskForm, desc: e.target.value})} 
-                    required 
-                    placeholder="Enter description"
-                  />
-                </div>
-                <div className="filter-group">
-                  <label>Priority</label>
-                  <select 
-                    className="custom-select" 
-                    value={newTaskForm.priority} 
-                    onChange={e => setNewTaskForm({...newTaskForm, priority: e.target.value})}
-                  >
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                  </select>
-                </div>
-                <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '16px' }}>
-                  Create Task
+                <button className="pixel-close-btn" onClick={() => setIsAddOpen(false)}>
+                  <i className="fa-solid fa-xmark"></i>
                 </button>
+              </div>
+              <div className="pixel-divider"></div>
+
+              <form onSubmit={handleAddTaskSubmit}>
+                <div className="pixel-form-group">
+                  <div className="pixel-icon-container">📓</div>
+                  <div className="pixel-input-wrapper">
+                    <label>Task Name</label>
+                    <input 
+                      type="text" 
+                      className="pixel-input" 
+                      value={newTaskForm.title} 
+                      onChange={e => setNewTaskForm({...newTaskForm, title: e.target.value})} 
+                      required 
+                      placeholder="Enter task name..."
+                    />
+                  </div>
+                </div>
+
+                <div className="pixel-form-group">
+                  <div className="pixel-icon-container">💬</div>
+                  <div className="pixel-input-wrapper">
+                    <label>Description</label>
+                    <textarea 
+                      className="pixel-input" 
+                      value={newTaskForm.desc} 
+                      onChange={e => setNewTaskForm({...newTaskForm, desc: e.target.value})} 
+                      required 
+                      placeholder="Enter description (optional)..."
+                    />
+                  </div>
+                </div>
+
+                <div className="pixel-form-group">
+                  <div className="pixel-icon-container">🚩</div>
+                  <div className="pixel-input-wrapper">
+                    <label>Priority</label>
+                    <div className="pixel-segmented-control">
+                      <div className={`pixel-segment ${newTaskForm.priority === 'low' ? 'active' : ''}`} onClick={() => setNewTaskForm({...newTaskForm, priority: 'low'})}>
+                        <div className="dot dot-low"></div> Low
+                      </div>
+                      <div className={`pixel-segment ${newTaskForm.priority === 'medium' ? 'active' : ''}`} onClick={() => setNewTaskForm({...newTaskForm, priority: 'medium'})}>
+                        <div className="dot dot-medium"></div> Medium
+                      </div>
+                      <div className={`pixel-segment ${newTaskForm.priority === 'high' ? 'active' : ''}`} onClick={() => setNewTaskForm({...newTaskForm, priority: 'high'})}>
+                        <div className="dot dot-high"></div> High
+                      </div>
+                      <div className={`pixel-segment ${newTaskForm.priority === 'urgent' ? 'active' : ''}`} onClick={() => setNewTaskForm({...newTaskForm, priority: 'urgent'})}>
+                        <div className="dot dot-urgent"></div> Urgent
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+                <div className="pixel-form-group">
+                  <div className="pixel-icon-container">📅</div>
+                  <div className="pixel-input-wrapper">
+                    <label>Date <span style={{ fontWeight: 'normal', color: '#6c5a88' }}>(Optional)</span></label>
+                    <input 
+                      type="date" 
+                      className="pixel-input" 
+                      value={newTaskForm.date}
+                      onChange={e => setNewTaskForm({...newTaskForm, date: e.target.value})}
+                    />
+                  </div>
+                </div>
+
+                <div className="pixel-modal-actions">
+                  <button type="button" className="btn-pixel-cancel" onClick={() => setIsAddOpen(false)}>Cancel</button>
+                  <button type="submit" className="btn-pixel-submit">✨ Create Task ✨</button>
+                </div>
               </form>
             </div>
+
           </div>
         </div>
       )}
